@@ -1,7 +1,7 @@
 let socket;
 
 function initWebSocket() {
-    socket = new WebSocket("ws://smartoven.local:8000/ws");
+    socket = new WebSocket("ws://smartoven.local/ws");
 
     // Update the oven status when a message is received
     socket.onmessage = function (event) {
