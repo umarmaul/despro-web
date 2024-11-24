@@ -1,7 +1,7 @@
 let socket;
 
 function initWebSocket() {
-    socket = new WebSocket("ws://localhost:8000/ws");
+    socket = new WebSocket("ws://192.168.207.221:8000/ws");
 
     // Update the oven status when a message is received
     socket.onmessage = function (event) {
