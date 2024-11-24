@@ -85,7 +85,7 @@ async def notify_clients():
 
 
 def main() -> None:
-    uvicorn.run("despro_web.main:app", host="0.0.0.0", port=80, reload=True)
+    uvicorn.run("despro_web.main:app", host="127.0.0.1", port=8000, reload=True)
 
 
 if __name__ == "__main__":
