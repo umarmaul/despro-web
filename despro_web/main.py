@@ -5,6 +5,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi import WebSocket, WebSocketDisconnect, Request
 import os
+import logging
+
+# Logging setup
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
 
@@ -54,10 +58,15 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 async def notify_clients():
+    """Notify all connected WebSocket clients about the updated oven status."""
+    message = {"oven_status": oven_status["state"]}
+    logging.info(f"Notifying clients: {message}")  # Log the message
     for client in connected_clients:
-        await client.send_json({"oven_status": oven_status["state"]})
-
-
+        try:
+            await client.send_json(message)
+        except Exception as e:
+            logging.error(f"Error sending message to client: {e}")
+            
 def main() -> None:
     uvicorn.run("despro_web.main:app", host="0.0.0.0", port=8000, reload=True)
 
