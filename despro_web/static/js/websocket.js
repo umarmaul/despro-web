@@ -1,18 +1,27 @@
 let socket;
 
 function initWebSocket() {
-    socket = new WebSocket("ws://smartoven.local/ws");
+    socket = new WebSocket("ws://localhost:8000/ws");
 
-    // Update oven status when a message is received
     socket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        document.getElementById("status").innerText =
-            "Oven Status: " + data.oven_status;
+
+        if (data.type === "status_update") {
+            document.getElementById("state").innerText =
+                "Oven Status: " + data.state;
+            document.getElementById("mode").innerText =
+                "Mode: " + (data.mode || "None");
+            document.getElementById("time").innerText =
+                "Time Remaining: " + data.time_remaining + " seconds";
+        }
+
+        if (data.state === "ON") {
+            document.getElementById("time").innerText =
+                "Time Remaining: " + data.time_remaining + " seconds";
+        }
     };
 
-    // Reconnect WebSocket if connection is closed
     socket.onclose = function () {
-        console.log("WebSocket closed, reconnecting...");
         setTimeout(initWebSocket, 1000);
     };
 }

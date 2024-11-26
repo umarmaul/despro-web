@@ -1,9 +1,8 @@
 from typing import List
 from fastapi import WebSocket
-import logging
-
-# Logging setup
-logging.basicConfig(level=logging.INFO)
+from despro_web.services.oven_service import oven_status
+from despro_web.models.history import CommandHistory
+from sqlalchemy.orm import Session
 
 
 class WebSocketManager:
@@ -18,17 +17,46 @@ class WebSocketManager:
         self.active_connections.remove(websocket)
 
     async def broadcast(self, message: dict):
-        logging.info(f"Broadcasting message: {message}")
         for connection in self.active_connections:
-            try:
-                await connection.send_json(message)
-            except Exception as e:
-                logging.error(f"Error sending message: {e}")
+            await connection.send_json(message)
 
 
 websocket_manager = WebSocketManager()
 
 
-async def update_oven_status(oven_status: dict):
-    message = {"oven_status": oven_status["state"]}
+async def update_oven_status():
+    """
+    Kirimkan status oven terbaru melalui WebSocket.
+    """
+    message = {
+        "type": "status_update",
+        "state": oven_status["state"],
+        "mode": oven_status["mode"],
+        "api_mode": oven_status["api_mode"],
+        "time_remaining": oven_status["time_remaining"],
+    }
+    await websocket_manager.broadcast(message)
+
+
+async def broadcast_history(db: Session):
+    """
+    Kirimkan data 10 history terbaru ke semua klien melalui WebSocket.
+    """
+    history = (
+        db.query(CommandHistory)
+        .order_by(CommandHistory.timestamp.desc())
+        .limit(10)
+        .all()
+    )
+    message = {
+        "type": "history_update",
+        "history": [
+            {
+                "command": h.command,
+                "response": h.response,
+                "timestamp": h.timestamp.isoformat(),
+            }
+            for h in history
+        ],
+    }
     await websocket_manager.broadcast(message)
