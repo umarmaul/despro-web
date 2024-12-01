@@ -3,7 +3,7 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from despro_web.routes import api, websocket, voice_command, web
+from despro_web.routes import api, websocket, voice_command, web, camera
 from despro_web.tasks.countdown import countdown_timer
 from despro_web.config import Base, engine
 import os
@@ -29,9 +29,12 @@ app.add_middleware(
 
 # Register routes
 app.include_router(api.router, prefix="/api")
-app.include_router(websocket.router)
+app.include_router(
+    websocket.router,
+)
 app.include_router(voice_command.router)
 app.include_router(web.router)
+app.include_router(camera.router)
 
 app.mount(
     "/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static"
