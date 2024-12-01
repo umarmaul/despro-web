@@ -1,33 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Oven Dashboard</title>
+        <link rel="stylesheet" href="/static/css/styles.css" />
         <script src="/static/js/websocket.js" defer></script>
+        <script src="/static/js/script.js" defer></script>
     </head>
     <body>
         <h1>Oven Monitoring Dashboard</h1>
-        <h2 id="state">Oven Status: OFF</h2>
-        <h3 id="mode">Mode: None</h3>
-        <h3 id="time">Time Remaining: 0 seconds</h3>
+        <div class="container">
+            <div class="card">
+                <h2 id="state">Oven Status: OFF</h2>
+                <img
+                    id="status-img"
+                    src="/static/images/oven-off.png"
+                    alt="Oven Status"
+                />
+                <h3 id="mode">Mode: None</h3>
+                <h3 id="time">Time Remaining: 0 seconds</h3>
+            </div>
 
-        <h2>Command History</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Command</th>
-                    <th>Response</th>
-                    <th>Timestamp</th>
-                </tr>
-            </thead>
-            <tbody id="history">
-                {% for entry in history %}
-                <tr>
-                    <td>{{ entry.command }}</td>
-                    <td>{{ entry.response }}</td>
-                    <td>{{ entry.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <div class="card">
+                <h2>Video Stream</h2>
+                <img src="/video_feed" alt="Video Stream" />
+            </div>
+
+            <div class="card">
+                <h2>Capture & Predict</h2>
+                <form action="/capture" method="post">
+                    <button type="submit">Capture & Predict</button>
+                </form>
+                <div id="prediction">
+                    <h3>Prediction: <span id="label">N/A</span></h3>
+                    <img id="captured-image" src="" alt="Captured Image" />
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Command History</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Response</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history">
+                            {% for entry in history %}
+                            <tr>
+                                <td>{{ entry.command }}</td>
+                                <td>{{ entry.response }}</td>
+                                <td>
+                                    {{ entry.timestamp.strftime('%Y-%m-%d
+                                    %H:%M:%S') }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
