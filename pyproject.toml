@@ -12,7 +12,7 @@ Jinja2 = "^3.1.4"
 sqlalchemy = "^2.0.36"
 numpy = "^2.0.2"
 opencv-python = "^4.10.0.84"
-tensorflow = { version = "^2.18.0", source = "pip" }
+tensorflow = "^2.18.0"
 
 [tool.poetry.scripts]
 start = "despro_web.main:main"
